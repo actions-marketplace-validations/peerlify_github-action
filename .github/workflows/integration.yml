@@ -1,0 +1,63 @@
+# Joins real runners to a Peerlify network. Run it by hand after setting the
+# PEERLIFY_AUTHKEY secret (an ephemeral, reusable key) and, for the api-token
+# job, PEERLIFY_API_TOKEN (keys:write + devices:write).
+name: Integration
+
+on:
+  workflow_dispatch:
+    inputs:
+      ping:
+        description: Peer (mesh name or overlay IP) the runners must reach. Optional.
+        required: false
+        default: ''
+      api-token:
+        description: Also run the api-token job.
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  authkey:
+    name: authkey on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Connect to Peerlify
+        id: peerlify
+        uses: ./
+        with:
+          authkey: ${{ secrets.PEERLIFY_AUTHKEY }}
+          ping: ${{ inputs.ping }}
+
+      - name: Show the connection
+        shell: bash
+        run: |
+          echo "ip=${{ steps.peerlify.outputs.ip }}"
+          echo "fqdn=${{ steps.peerlify.outputs.fqdn }}"
+          echo "client-id=${{ steps.peerlify.outputs.client-id }}"
+          echo "network-id=${{ steps.peerlify.outputs.network-id }}"
+          test -n "${{ steps.peerlify.outputs.ip }}"
+
+  api-token:
+    name: api-token on ubuntu-latest
+    if: ${{ inputs.api-token }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Connect to Peerlify
+        id: peerlify
+        uses: ./
+        with:
+          api-token: ${{ secrets.PEERLIFY_API_TOKEN }}
+          ping: ${{ inputs.ping }}
+
+      - name: Show the connection
+        run: test -n "${{ steps.peerlify.outputs.ip }}" && echo "ip=${{ steps.peerlify.outputs.ip }}"

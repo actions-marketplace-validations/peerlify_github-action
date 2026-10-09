@@ -1,0 +1,68 @@
+name: Connect to Peerlify
+description: Join this GitHub Actions runner to your Peerlify network for the length of the job.
+author: Peerlify Inc.
+branding:
+  icon: share-2
+  color: blue
+
+inputs:
+  authkey:
+    description: >-
+      A Peerlify auth key (pk_...). Use an ephemeral key so the runner is removed
+      from the network when the job ends. One of `authkey` or `api-token` is required.
+    required: false
+  api-token:
+    description: >-
+      A Peerlify API token (papi_...) with the keys:write scope. The action mints a
+      single-use, ephemeral auth key for this run and revokes it afterwards. Add
+      devices:write so it can also approve the runner on networks that require device
+      approval and delete it from the network when the job ends.
+    required: false
+  tags:
+    description: >-
+      Comma-separated tags for the key minted with `api-token`, with or without the
+      `tag:` prefix. The tags must already exist in the network. Ignored with `authkey`,
+      which carries the tags it was created with.
+    required: false
+  hostname:
+    description: >-
+      The name the runner joins the network under (a DNS label). Defaults to the
+      runner's machine name.
+    required: false
+  version:
+    description: Peerlify client version to install, `stable` or an exact version such as 2.6.0.
+    required: false
+    default: stable
+  ping:
+    description: >-
+      Comma-separated peers (mesh names or overlay IPs) that must answer before this
+      step succeeds.
+    required: false
+  timeout:
+    description: How long to wait for an address, and for each `ping` target, e.g. 90s or 3m.
+    required: false
+    default: 3m
+  api-url:
+    description: Base URL of the Peerlify public API.
+    required: false
+    default: https://web.peerlify.com/api/v1
+  pkgs-url:
+    description: Base URL Peerlify client packages are downloaded from.
+    required: false
+    default: https://pkgs.peerlify.net
+
+outputs:
+  ip:
+    description: The runner's overlay IP address.
+  fqdn:
+    description: The runner's mesh DNS name.
+  client-id:
+    description: The runner's device ID, as the Peerlify public API takes it.
+  network-id:
+    description: The ID of the network the runner joined.
+
+runs:
+  using: node24
+  main: src/main.js
+  post: src/post.js
+  post-if: always()
