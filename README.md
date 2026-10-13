@@ -4,7 +4,7 @@ Join a GitHub Actions runner to your [Peerlify](https://peerlify.com) network fo
 
 ```yaml
 - name: Connect to Peerlify
-  uses: Peerlify/github-action@v1
+  uses: peerlify/github-action@v1
   with:
     authkey: ${{ secrets.PEERLIFY_AUTHKEY }}
 ```
@@ -25,7 +25,7 @@ jobs:
 
       - name: Connect to Peerlify
         id: peerlify
-        uses: Peerlify/github-action@v1
+        uses: peerlify/github-action@v1
         with:
           authkey: ${{ secrets.PEERLIFY_AUTHKEY }}
           ping: 100.64.0.17          # optional: wait until this peer answers
@@ -42,7 +42,7 @@ Create the token under **Settings → Keys → API access tokens** with the `key
 
 ```yaml
 - name: Connect to Peerlify
-  uses: Peerlify/github-action@v1
+  uses: peerlify/github-action@v1
   with:
     api-token: ${{ secrets.PEERLIFY_API_TOKEN }}
     tags: ci
@@ -95,7 +95,7 @@ If the runner is lost before cleanup can run, the control plane removes the ephe
 - Use **ephemeral** keys so finished runs don't accumulate in your network, and give them a tag whose ACL rules allow only what CI needs.
 - Prefer `api-token` over a long-lived `authkey`: each run gets a key that works once and expires within a day.
 - Secrets are not passed to workflows triggered from forks, so a pull request from a fork can't connect.
-- Pin the action to a full commit SHA if your policy requires it, for example `Peerlify/github-action@<sha> # v1`.
+- Pin the action to a full commit SHA if your policy requires it, for example `peerlify/github-action@<sha> # v1`.
 
 ## Troubleshooting
 
