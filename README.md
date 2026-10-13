@@ -1,3 +1,5 @@
+<img src="images/peerlify.png" alt="Peerlify" width="64" height="64">
+
 # Peerlify GitHub Action
 
 Join a GitHub Actions runner to your [Peerlify](https://peerlify.com) network for the length of a job. Steps after it reach your devices by their overlay IP, the same as any other member: deploy to a private server, test against an internal database, pull from a cache with no public address. When the job ends, the runner is removed from the network again.
